@@ -1,0 +1,37 @@
+package com.app.meridian.gradeScale.dto;
+
+import java.util.Set;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/** Query parameters for listing: free text, filters, ranges, paging, sorting. */
+@Getter
+@Setter
+@NoArgsConstructor
+public class GradeScaleSearchCriteria {
+
+    private String search;
+    private Double minMinScore;
+    private Double maxMinScore;
+    private Double minMaxScore;
+    private Double maxMaxScore;
+
+    private int page = 1;
+    private int limit = 20;
+    private String sortBy = "id";
+    private String sortDirection = "desc";
+
+    /** Aliases so the frontend can send q / sort / order exactly as the screens do. */
+    public void setQ(String q) {
+        this.search = q;
+    }
+
+    public void setSort(String sort) {
+        this.sortBy = sort;
+    }
+
+    public void setOrder(String order) {
+        this.sortDirection = order;
+    }
+}

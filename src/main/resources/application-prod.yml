@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/meridian}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USER:meridian}
+    password: ${DB_PASSWORD:meridian}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  h2:
+    console:
+      enabled: false
+meridian:
+  seed:
+    enabled: false

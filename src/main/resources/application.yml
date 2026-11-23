@@ -1,0 +1,80 @@
+spring:
+  # the app uses Redis as a cache/limiter only, not as a Spring Data repository store
+  data:
+    redis:
+      repositories:
+        enabled: false
+  application:
+    name: meridian
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:h2:mem:meridian;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 4MB
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: 8080
+
+meridian:
+  cache:
+    # auto = Redis when a server answers the startup probe, otherwise in-memory (Caffeine).
+    # Force one with "redis" or "memory".
+    provider: auto
+    default-ttl: 10m
+    key-prefix: "meridian:"
+    ttls:
+      gradeScaleByTotal: 1h
+      schoolSettings: 30m
+      activeTerm: 15m
+      announcementFeed: 2m
+      classTimetable: 5m
+      termReportsByStudent: 10m
+  rate-limit:
+    enabled: true
+    # per client (signed-in account, or IP when anonymous)
+    requests-per-minute: 240
+    # deliberately small: login, refresh, forgot/reset — a whole school can share one NAT address
+    auth-requests-per-minute: 60
+    window: 1m
+    backend: auto
+  jwt:
+    secret: ${JWT_SECRET:a-very-long-development-only-secret-key-change-me-in-production-0123456789}
+    # access token: short enough that a leaked one is not a session
+    expiration-minutes: 30
+    # refresh token: 14 days, rotated on every use and revocable server-side
+    refresh-expiration-minutes: 20160
+  auth:
+    # Return the reset token in the forgot-password response so an API-only setup (and the smoke
+    # test) can finish the flow without a mail server. Wire SMTP into ResetMailer and set false.
+    expose-reset-token: true
+  seed:
+    enabled: true
+  uploads:
+    directory: uploads
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.app.meridian: INFO

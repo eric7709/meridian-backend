@@ -1,0 +1,22 @@
+# Everything backed by Redis: shared cache + shared rate-limit counters.
+#   docker compose up -d redis
+#   SPRING_PROFILES_ACTIVE=redis mvn spring-boot:run
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2s
+      connect-timeout: 2s
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+
+# Force Redis even if the probe would have fallen back (also makes a missing server a visible failure).
+meridian:
+  cache:
+    provider: redis
+  ratelimit:
+    backend: redis
